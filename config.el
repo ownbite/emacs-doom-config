@@ -6,6 +6,7 @@
 (setq mac-option-modifier nil
       x-select-enable-clipboard t)
 
+;; Set line number to relative
 (setq display-line-numbers-type 'relative)
 
 ;; Use pipenv package

@@ -6,3 +6,9 @@
 ;; (package! another-package :recipe (:fetcher github :repo "username/repo"))
 ;; (package! builtin-package :disable t)
 (package! evil-collection)
+
+;; Multi term for zsh support
+(package! multi-term)
+
+;; Better user experience with git
+(package! magit)

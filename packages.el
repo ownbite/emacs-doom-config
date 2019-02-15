@@ -12,4 +12,3 @@
 
 ;; Better user experience with git
 (package! magit)
-(package! evil-magit)

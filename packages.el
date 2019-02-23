@@ -12,3 +12,7 @@
 
 ;; Better user experience with git
 (package! magit)
+
+;; For formatting
+(package! py-autopep8)
+(package! blacken)

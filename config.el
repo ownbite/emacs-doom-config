@@ -1,13 +1,11 @@
 ;;; ~/.doom.d/config.el -*- lexical-binding: t; -*-
 
 ;; Place your private configuration here
-
 (server-start)
 
 ;; Make it possible to quickly swap over to iterm
 (defun open-iterm ()
   (interactive)
-
 
   (shell-command
    (format "open -a /Applications/iTerm.app \"%s\""
@@ -21,10 +19,15 @@
   (evil-window-down 1)
   (multi-term))
 
+(defun pipenv-activate-and-reload ()
+  (interactive)
+  (pipenv-activate)
+  (doom/reload))
 
 ;; Custom keybindings
 (map!
  (:leader
+    :desc "jedi code completion"   :n  "m"   #'jedi:complete
     :desc "M-x"                    :nv ":"   #'execute-extended-command
 
     :desc "Delete the window"      :n  "q"   #'delete-window
@@ -37,7 +40,9 @@
       :desc "Toggle terminal"      :n  "t"   #'open-terminal-in-new-window)
 
     (:desc "code" :prefix "c"
-      :desc "Toggle comments"      :n  "c"   #'comment-line)))
+      :desc "Toggle comments"      :n  "c"   #'comment-line
+      :desc "Activate pipenv"      :n  "a"   #'pipenv-activate-and-reload)))
+
 
 ;; Set the meta key to COMMAND on mac keyboard
 (setq mac-option-modifier nil
@@ -46,20 +51,14 @@
 ;; Set line number to relative
 (setq display-line-numbers-type 'relative)
 
-;; Use pipenv package and connect it to python-mode
-(def-package! pipenv
-  :hook (python-mode . pipenv-mode)
-  :init
-  (setq
-   pipenv-projectile-after-switch-function
-   #'pipenv-projectile-after-switch-extended))
-
 ;; When swapping project then actiate pipenv reload doom for changes to take effect
 ;; the open neotree
-(add-hook! 'projectile-after-switch-project-hook
-  (run-at-time "1 sec" nil #'pipenv-activate)
-  (run-at-time "2 sec" nil #'doom/reload)
-  (neotree-projectile-action))
+;; (add-hook! 'projectile-after-switch-project-hook
+;;   (run-at-time "2 sec" nil #'pipenv-activate))
 
-;; Configure neotree
-(setq neo-smart-open 1)
+;; Run autopep8 on save
+(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+
+;; Run blacken on save
+;; (add-hook 'python-mode-hook 'blacken-mode)
+

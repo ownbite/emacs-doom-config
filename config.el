@@ -53,5 +53,3 @@
 ;; Run autopep8 on save
 (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
 
-;; Deactivate and activate pipenv when switching between python files
-(add-hook 'python-mode-hook (lambda () (pipenv-deactivate) (pipenv-activate)))

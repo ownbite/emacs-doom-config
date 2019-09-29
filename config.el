@@ -19,10 +19,10 @@
   (evil-window-down 1)
   (multi-term))
 
-(defun pipenv-activate-and-reload ()
-  (interactive)
-  (pipenv-activate)
-  (doom/reload))
+;; (defun pipenv-activate-and-reload ()
+;;   (interactive)
+;;   (pipenv-activate)
+;;   (doom/reload))
 
 ;; Custom keybindings
 (map!
@@ -45,20 +45,13 @@
 
 
 ;; Set the meta key to COMMAND on mac keyboard
-(setq mac-option-modifier nil
-      x-select-enable-clipboard t)
-
-;; Set line number to relative
-(setq display-line-numbers-type 'relative)
-
-;; When swapping project then actiate pipenv reload doom for changes to take effect
-;; the open neotree
-;; (add-hook! 'projectile-after-switch-project-hook
-;;   (run-at-time "2 sec" nil #'pipenv-activate))
+(setq mac-option-key-is-meta nil
+      mac-command-key-is-meta t
+      mac-command-modifier 'meta
+      mac-option-modifier 'none)
 
 ;; Run autopep8 on save
 (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
 
-;; Run blacken on save
-;; (add-hook 'python-mode-hook 'blacken-mode)
-
+;; Deactivate and activate pipenv when switching between python files
+(add-hook 'python-mode-hook (lambda () (pipenv-deactivate) (pipenv-activate)))

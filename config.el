@@ -19,10 +19,10 @@
   (evil-window-down 1)
   (multi-term))
 
-;; (defun pipenv-activate-and-reload ()
-;;   (interactive)
-;;   (pipenv-activate)
-;;   (doom/reload))
+(defun pipenv-activate-and-reload ()
+  (interactive)
+  (pipenv-deactivate)
+  (pipenv-activate))
 
 ;; Custom keybindings
 (map!

@@ -39,10 +39,16 @@
     (:desc "toggle" :prefix "t"
       :desc "Toggle terminal"      :n  "t"   #'open-terminal-in-new-window)
 
+    (:desc "git" :prefix "g"
+      :desc "Magit status"         :n  "g"   #'magit-status)
+
     (:desc "code" :prefix "c"
       :desc "Toggle comments"      :n  "c"   #'comment-line
       :desc "Activate pipenv"      :n  "a"   #'pipenv-activate-and-reload)))
 
+;; Autocompletion
+(setq company-idle-delay 0.2
+      company-minimum-prefix-length 3)
 
 ;; Set the meta key to COMMAND on mac keyboard
 (setq mac-option-key-is-meta nil
@@ -52,4 +58,3 @@
 
 ;; Run autopep8 on save
 (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
-

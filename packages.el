@@ -16,3 +16,6 @@
 ;; For formatting
 (package! py-autopep8)
 (package! blacken)
+
+;; Python package management
+(package! poetry)

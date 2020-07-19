@@ -14,8 +14,7 @@
 (package! magit)
 
 ;; For formatting
-(package! py-autopep8)
+;; (package! py-autopep8)
 (package! blacken)
+(package! python-pytest)
 
-;; Python package management
-(package! poetry)

@@ -24,26 +24,32 @@
   (pipenv-deactivate)
   (pipenv-activate))
 
+(setq flycheck-check-syntax-automatically '(mode-enabled save))
+
 ;; Custom keybindings
 (map!
+ :n "M-m" 'evil-mc-make-and-goto-next-match
+
  (:leader
-    :desc "jedi code completion"   :n  "m"   #'jedi:complete
+    ;; :desc "jedi code completion"   :n  "m"   #'jedi:complete
     :desc "M-x"                    :nv ":"   #'execute-extended-command
 
     :desc "Delete the window"      :n  "q"   #'delete-window
 
-    :desc "Horizonal Split"        :n  "s"   #'split-window-below
-    :desc "Vertical Split"         :n  "v"   #'split-window-right
+    ;; :desc "Horizonal Split"        :n  "s"   #'split-window-below
+    ;; :desc "Vertical Split"         :n  "v"   #'split-window-right
 
 
     (:desc "toggle" :prefix "t"
       :desc "Toggle terminal"      :n  "t"   #'open-terminal-in-new-window)
 
-    (:desc "git" :prefix "g"
-      :desc "Magit status"         :n  "g"   #'magit-status)
+    ;; (:desc "git" :prefix "g"
+    ;;   :desc "Magit status"         :n  "g"   #'magit-status)
 
     (:desc "code" :prefix "c"
       :desc "Toggle comments"      :n  "c"   #'comment-line
+      :desc "Run pytest repeat"    :n  "t"   #'python-pytest-repeat
+      :desc "Run pytest config"    :n  "y"   #'python-pytest-popup
       :desc "Activate pipenv"      :n  "a"   #'pipenv-activate-and-reload)))
 
 ;; Autocompletion
@@ -56,5 +62,5 @@
       mac-command-modifier 'meta
       mac-option-modifier 'none)
 
-;; Run autopep8 on save
-(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+;; Do not guess auto root
+(setq lsp-auto-guess-root nil)

@@ -5,6 +5,8 @@
 ;; (package! some-package)
 ;; (package! another-package :recipe (:fetcher github :repo "username/repo"))
 ;; (package! builtin-package :disable t)
+(package! pipenv-with-projectile :disable t)
+(package! pipenv :disable t)
 (package! evil-collection)
 
 ;; Multi term for zsh support
@@ -18,3 +20,7 @@
 (package! blacken)
 (package! python-pytest)
 
+
+(package! terraform-mode)
+
+(package! ox-reveal)

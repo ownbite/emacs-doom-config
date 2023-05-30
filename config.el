@@ -1,16 +1,25 @@
 ;;; ~/.doom.d/config.el -*- lexical-binding: t; -*-
 (server-start)
 
+(setq doom-theme 'doom-dracula)
+(setq user-emacs-directory "~/.debug.emacs.d/")
+(setq display-line-numbers-type 'relative)
+
+(require 'ox-reveal)
+
+
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; CUSTOM FUNCTIONS ;;
 ;;;;;;;;;;;;;;;;;;;;;;
+(setq lsp-pyls-server-command "pyright-langserver")
+(setq lsp-python-ms-executable "pyright-langserver")
+
 (defun open-iterm ()
   (interactive)
 
   (shell-command
    (format "open -a /Applications/iTerm.app \"%s\""
        (if (buffer-file-name)
-           (file-name-directory (buffer-file-name))
          (expand-file-name default-directory)))))
 
 (defun open-terminal-in-new-window ()
@@ -18,6 +27,14 @@
   (split-window-below)
   (evil-window-down 1)
   (multi-term))
+
+(defun autoimport-isort-black ()
+  (interactive)
+  (shell-command (format "autoimport %s" (buffer-file-name)))
+  (revert-buffer)
+  (blacken-buffer)
+  (py-isort-buffer)
+  (save-buffer))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -37,8 +54,11 @@
     (:desc "code" :prefix "c"
       :desc "Toggle comments"      :n  "c"   #'comment-line
       :desc "Run pytest repeat"    :n  "t"   #'python-pytest-repeat
-      :desc "Run pytest config"    :n  "y"   #'python-pytest-popup)))
+      :desc "Run autoimport isort and black"    :n  "s"   #'autoimport-isort-black
+      :desc "Run pytest config"    :n  "y"   #'python-pytest-popup)
 
+    (:desc "file" :prefix "f"
+      :desc "open link"            :n  "o"   #'browse-url)))
 
 ;;;;;;;;;;;;;;
 ;; SETTINGS ;;
@@ -58,3 +78,17 @@
 (setq lsp-auto-guess-root nil)
 
 (setq flycheck-check-syntax-automatically '(mode-enabled save))
+
+(use-package tramp
+  :ensure nil
+  :custom
+  (tramp-default-method "ssh"))
+
+(setenv "PATH"
+  (concat
+   "/Users/linuswallin/.pyenv/shims" ":"
+   "/Users/linuswallin/.local/bin" ":"
+   "/usr/local/bin" ":"
+   (getenv "PATH")
+  )
+)

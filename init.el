@@ -61,6 +61,7 @@
        ;;word-wrap         ; soft wrapping with language-aware indent
 
        :emacs
+       undo
        (dired            ; making dired pretty [functional]
        +icons          ; colorful icons for dired-mode
         )
@@ -75,6 +76,9 @@
        ;;term              ; terminals in Emacs
        ;;vterm             ; another terminals in Emacs
 
+       :checkers
+       syntax
+
        :tools
        ;;ansible
        ;;debugger          ; FIXME stepping through code, to help you add bugs
@@ -83,7 +87,8 @@
        ;;editorconfig      ; let someone else argue about tabs vs spaces
        ;;ein               ; tame Jupyter notebooks with emacs
        (eval +overlay)     ; run code, run (also, repls)
-       flycheck          ; tasing you for every semicolon you forget
+       ;;flycheck          ; tasing you for every semicolon you forget
+
        ;;flyspell          ; tasing you for misspelling mispelling
        ;;gist              ; interacting with github gists
        (lookup           ; helps you navigate your code and documentation
@@ -96,7 +101,7 @@
        ;;pdf               ; pdf enhancements
        ;;prodigy           ; FIXME managing external services & code builders
        ;;rgb               ; creating color strings
-       ;;terraform         ; infrastructure as code
+       terraform         ; infrastructure as code
        ;;tmux              ; an API for interacting with tmux
        ;;upload            ; map local to remote projects via ssh/ftp
        ;;wakatime
@@ -130,6 +135,7 @@
        ;;lean
        ;;ledger            ; an accounting system in Emacs
        ;;lua               ; one-based indices? one-based indices
+       yaml
        markdown          ; writing docs for people to ignore
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
@@ -146,7 +152,9 @@
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
        (python             ; beautiful is better than ugly
-        +lsp)       ;;qt                ; the 'cutest' gui framework ever
+        +lsp;;qt                ; the 'cutest' gui framework ever
+        +pyright
+        +poetry)
        ;;racket            ; a DSL for DSLs
        ;;rest              ; Emacs as a REST client
        rst               ; ReST in peace

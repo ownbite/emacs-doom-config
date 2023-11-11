@@ -28,14 +28,18 @@
   (evil-window-down 1)
   (multi-term))
 
-(defun autoimport-isort-black ()
+(defun isort-black-djhtml ()
+  "Format current buffer with autoimport, black, isort, and djhtml."
   (interactive)
-  (shell-command (format "autoimport %s" (buffer-file-name)))
-  (revert-buffer)
-  (blacken-buffer)
-  (py-isort-buffer)
+  (when (eq major-mode 'python-mode) ; Check if it's a Python file
+    (shell-command (format "autoimport %s" (buffer-file-name)))
+    (revert-buffer :ignore-auto :noconfirm)
+    (blacken-buffer)
+    (py-isort-buffer))
+  (when (eq major-mode 'html-mode) ; Check if it's an HTML file
+    (shell-command (format "djhtml -i %s" (buffer-file-name)))
+    (revert-buffer :ignore-auto :noconfirm))
   (save-buffer))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Custom keybindings ;;
@@ -54,7 +58,7 @@
     (:desc "code" :prefix "c"
       :desc "Toggle comments"      :n  "c"   #'comment-line
       :desc "Run pytest repeat"    :n  "t"   #'python-pytest-repeat
-      :desc "Run autoimport isort and black"    :n  "s"   #'autoimport-isort-black
+      :desc "Run isort, black and djhtml"    :n  "s"   #'isort-black-djhtml
       :desc "Run pytest config"    :n  "y"   #'python-pytest-popup)
 
     (:desc "file" :prefix "f"
@@ -97,3 +101,5 @@
 (add-hook 'js2-mode-hook 'skewer-mode)
 (add-hook 'css-mode-hook 'skewer-css-mode)
 (add-hook 'html-mode-hook 'skewer-html-mode)
+
+

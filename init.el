@@ -80,6 +80,7 @@
        syntax
 
        :tools
+       llm
        ;;ansible
        ;;debugger          ; FIXME stepping through code, to help you add bugs
        direnv

@@ -18,9 +18,12 @@
 ;; For formatting
 ;; (package! py-autopep8)
 (package! blacken)
+(package! ruff-format)
+(package! python-black)
 (package! python-pytest)
 
 
 (package! terraform-mode)
 
 (package! ox-reveal)
+(package! web-mode)

@@ -2,7 +2,7 @@
 (server-start)
 
 (setq doom-theme 'doom-dracula)
-(setq user-emacs-directory "~/.debug.emacs.d/")
+;;(setq user-emacs-directory "~/.emacs.d/")
 (setq display-line-numbers-type 'relative)
 
 (require 'ox-reveal)
@@ -28,31 +28,52 @@
   (evil-window-down 1)
   (multi-term))
 
-(defun isort-black-djhtml ()
-  "Try Ruff first; if it errors, fallback to autoimport+Black+isort (Python) or djhtml (HTML)."
+(defun ruff--project-root ()
+  "Return project root or current directory."
+  (or (and (fboundp 'projectile-project-root)
+           (ignore-errors (projectile-project-root)))
+      default-directory))
+
+(defun ruff-check-fix ()
+  "Run `ruff check --fix` silently in project root, keeping imports."
+  (interactive)
+  (when (executable-find "ruff")
+    (let ((default-directory (ruff--project-root)))
+      (start-process-shell-command
+       "ruff-check-fix" nil
+       "ruff check --fix --unfixable F401 ."))))
+
+(defun python-format-with-ruff ()
+  "Format Python file using Ruff or fallback."
+  (let ((ruff-ok (and (executable-find "ruff")
+                      (ignore-errors (ruff-check-fix) t)
+                      (ignore-errors (ruff-format-buffer) t))))
+    (if ruff-ok
+        (progn
+          (revert-buffer :ignore-auto :noconfirm)
+          (message "Formatted with Ruff"))
+      (when (and buffer-file-name (executable-find "autoimport"))
+        (shell-command (format "autoimport %s" (shell-quote-argument buffer-file-name)))
+        (revert-buffer :ignore-auto :noconfirm))
+      (when (fboundp 'blacken-buffer) (blacken-buffer))
+      (when (fboundp 'py-isort-buffer) (py-isort-buffer))
+      (message "Formatted with autoimport + Black + isort"))))
+
+(defun html-format-with-djhtml ()
+  "Format HTML buffer with djhtml."
+  (when buffer-file-name
+    (shell-command (format "djhtml %s" (shell-quote-argument buffer-file-name)))
+    (revert-buffer :ignore-auto :noconfirm)
+    (message "Formatted with djhtml")))
+
+(defun python-format ()
+  "Format Python or HTML depending on mode."
   (interactive)
   (cond
-   ;; Python
-   ((derived-mode-p 'python-mode)
-    (let ((ruff-ok (ignore-errors (ruff-format-buffer) t)))
-      (if ruff-ok
-          (message "Formatted with Ruff")
-        (when (and buffer-file-name (executable-find "autoimport"))
-          (shell-command (format "autoimport %s" (shell-quote-argument buffer-file-name)))
-          (revert-buffer :ignore-auto :noconfirm))
-        (when (fboundp 'blacken-buffer) (blacken-buffer))
-        (when (fboundp 'py-isort-buffer) (py-isort-buffer))
-        (message "Formatted with autoimport + Black + isort"))))
-   ;; HTML
-   ((derived-mode-p 'web-mode)
-    (when buffer-file-name
-      (shell-command (format "djhtml %s" (shell-quote-argument buffer-file-name)))
-      (revert-buffer :ignore-auto :noconfirm)
-      (message "Formatted with djhtml")))
-   (t
-    (message "No formatter configured for %s" major-mode)))
+   ((derived-mode-p 'python-mode) (python-format-with-ruff))
+   ((derived-mode-p 'web-mode)    (html-format-with-djhtml))
+   (t (message "No formatter configured for %s" major-mode)))
   (save-buffer))
-
 
 (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
 
@@ -74,7 +95,7 @@
       :desc "Toggle comments"      :n  "c"   #'comment-line
       :desc "Goto definition of fn":n  "g"   #'evil-goto-definition
       :desc "Run pytest repeat"    :n  "t"   #'python-pytest-repeat
-      :desc "Run isort, black and djhtml"    :n  "s"   #'isort-black-djhtml
+      :desc "Run isort, black and djhtml"    :n  "s"   #'python-format
       :desc "Run pytest config"    :n  "y"   #'python-pytest-popup)
 
     (:desc "file" :prefix "f"

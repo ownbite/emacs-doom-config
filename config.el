@@ -28,52 +28,16 @@
   (evil-window-down 1)
   (multi-term))
 
-(defun ruff--project-root ()
-  "Return project root or current directory."
-  (or (and (fboundp 'projectile-project-root)
-           (ignore-errors (projectile-project-root)))
-      default-directory))
-
-(defun ruff-check-fix ()
-  "Run `ruff check --fix` silently in project root, keeping imports."
+(defun ruff-format-current-file ()
+  "Run Ruff fix+format on this file, then reload."
   (interactive)
-  (when (executable-find "ruff")
-    (let ((default-directory (ruff--project-root)))
-      (start-process-shell-command
-       "ruff-check-fix" nil
-       "ruff check --fix --unfixable F401 ."))))
-
-(defun python-format-with-ruff ()
-  "Format Python file using Ruff or fallback."
-  (let ((ruff-ok (and (executable-find "ruff")
-                      (ignore-errors (ruff-check-fix) t)
-                      (ignore-errors (ruff-format-buffer) t))))
-    (if ruff-ok
-        (progn
-          (revert-buffer :ignore-auto :noconfirm)
-          (message "Formatted with Ruff"))
-      (when (and buffer-file-name (executable-find "autoimport"))
-        (shell-command (format "autoimport %s" (shell-quote-argument buffer-file-name)))
+  (when (eq major-mode 'python-mode) ; Check if it's a Python file
+        (shell-command (format "ruff check --fix %s" (buffer-file-name)))
+        (ruff-format-buffer)
         (revert-buffer :ignore-auto :noconfirm))
-      (when (fboundp 'blacken-buffer) (blacken-buffer))
-      (when (fboundp 'py-isort-buffer) (py-isort-buffer))
-      (message "Formatted with autoimport + Black + isort"))))
-
-(defun html-format-with-djhtml ()
-  "Format HTML buffer with djhtml."
-  (when buffer-file-name
-    (shell-command (format "djhtml %s" (shell-quote-argument buffer-file-name)))
-    (revert-buffer :ignore-auto :noconfirm)
-    (message "Formatted with djhtml")))
-
-(defun python-format ()
-  "Format Python or HTML depending on mode."
-  (interactive)
-  (cond
-   ((derived-mode-p 'python-mode) (python-format-with-ruff))
-   ((derived-mode-p 'web-mode)    (html-format-with-djhtml))
-   (t (message "No formatter configured for %s" major-mode)))
-  (save-buffer))
+  (when (eq major-mode 'html-mode) ; Check if it's an HTML file
+    (shell-command (format "djhtml -i %s" (buffer-file-name)))
+    (revert-buffer :ignore-auto :noconfirm)))
 
 (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
 
@@ -95,7 +59,7 @@
       :desc "Toggle comments"      :n  "c"   #'comment-line
       :desc "Goto definition of fn":n  "g"   #'evil-goto-definition
       :desc "Run pytest repeat"    :n  "t"   #'python-pytest-repeat
-      :desc "Run isort, black and djhtml"    :n  "s"   #'python-format
+      :desc "Run isort, black and djhtml"    :n  "s"   #'ruff-format-buffer
       :desc "Run pytest config"    :n  "y"   #'python-pytest-popup)
 
     (:desc "file" :prefix "f"

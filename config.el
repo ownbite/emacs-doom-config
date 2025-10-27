@@ -36,8 +36,8 @@
       (shell-command (format "ruff format %s" (shell-quote-argument buffer-file-name)))
       (shell-command (format "ruff check --select I --fix %s" (shell-quote-argument buffer-file-name)))
       (revert-buffer :ignore-auto :noconfirm)))
-  (when (eq major-mode 'html-mode) ; Check if it's an HTML file
-    (shell-command (format "djhtml -i %s" (buffer-file-name)))
+  (when (eq major-mode 'web-mode) ; Check if it's an HTML file
+    (shell-command (format "djhtml %s" (buffer-file-name)))
     (revert-buffer :ignore-auto :noconfirm)))
 
 (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))

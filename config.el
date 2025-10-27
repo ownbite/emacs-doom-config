@@ -28,13 +28,14 @@
   (evil-window-down 1)
   (multi-term))
 
-(defun ruff-format-current-file ()
+(defun ruff-current-format-file ()
   "Run Ruff fix+format on this file, then reload."
   (interactive)
   (when (eq major-mode 'python-mode) ; Check if it's a Python file
-        (shell-command (format "ruff check --fix %s" (buffer-file-name)))
-        (ruff-format-buffer)
-        (revert-buffer :ignore-auto :noconfirm))
+    (progn
+      (shell-command (format "ruff format %s" (shell-quote-argument buffer-file-name)))
+      (shell-command (format "ruff check --select I --fix %s" (shell-quote-argument buffer-file-name)))
+      (revert-buffer :ignore-auto :noconfirm)))
   (when (eq major-mode 'html-mode) ; Check if it's an HTML file
     (shell-command (format "djhtml -i %s" (buffer-file-name)))
     (revert-buffer :ignore-auto :noconfirm)))
@@ -59,7 +60,7 @@
       :desc "Toggle comments"      :n  "c"   #'comment-line
       :desc "Goto definition of fn":n  "g"   #'evil-goto-definition
       :desc "Run pytest repeat"    :n  "t"   #'python-pytest-repeat
-      :desc "Run isort, black and djhtml"    :n  "s"   #'ruff-format-buffer
+      :desc "Run isort, black and djhtml"    :n  "s"   #'ruff-current-format-file
       :desc "Run pytest config"    :n  "y"   #'python-pytest-popup)
 
     (:desc "file" :prefix "f"
